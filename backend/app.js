@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors";
+
 import usersRoute from "./routes/userRoute.js";
 import postOptions from "./routes/optionsRoute.js";
 import postQuiestons from "./routes/questionsRoute.js";
@@ -7,8 +9,15 @@ import postResults from "./routes/resultsRoute.js";
 const PORT = 3000;
 const app = express();
 
-app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: "GET,POST,PUT,PATCH,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
+app.use(express.json());
 app.use("/users", usersRoute);
 app.use("/options", postOptions);
 app.use("/questions", postQuiestons);

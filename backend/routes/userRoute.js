@@ -5,11 +5,6 @@ import jwt from "jsonwebtoken";
 
 const router = Router();
 
-router.get("/", auth, (req, res) => {
-  const users = Users.getUsers();
-  res.json(users);
-});
-
 // router.get("/:id", (req, res) => {
 //   const user = Users.getUserById(+req.params.id);
 //   if (!user) {
@@ -83,8 +78,8 @@ router.delete("/:id", auth, (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
   Users.deleteUser(+req.params.id);
-  delete req.userId
-  delete req.headers.authorization
+  delete req.userId;
+  delete req.headers.authorization;
   res.json({ message: "User delete success" });
 });
 
@@ -107,14 +102,17 @@ router.post("/login", (req, res) => {
 });
 
 export function auth(req, res, next) {
-  const accessToken = req.headers.authorization
+  const accessToken = req.headers.authorization;
   if (!accessToken) {
-    return res.status(401).json({message: 'Unauthorized'})
+    return res.status(401).json({ message: "Unauthorized" });
   }
-  const token = accessToken.split(' ')[1]
-  const data = jwt.verify(token, "secret_key")
-  req.userId = data.id
-  next()
+  const token = accessToken.split(" ")[1];
+  const data = jwt.verify(token, "secret_key");
+  req.userId = data.id;
+  next();
 }
-
+router.get("/", auth, (req, res) => {
+  const users = Users.getUsers();
+  res.json(users);
+});
 export default router;
