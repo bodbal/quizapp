@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import apiClient from "../api/apiClient";
-
 interface Option {
   id: number;
   text: string;
@@ -30,12 +29,12 @@ const PlayQuiz = () => {
   const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Backendről betölti a quiz-t, kérdéseket és opciókat
+
   const fetchQuiz = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      // 1️⃣ Quiz adat
+
       const quizRes = await apiClient.get(`/quizzes/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -46,14 +45,14 @@ const PlayQuiz = () => {
         questions: [],
       };
 
-      // 2️⃣ Kérdések lekérése
+
       const questionsRes = await apiClient.get(`/questions?quiz_id=${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const questions: Question[] = await Promise.all(
         questionsRes.data.map(async (q: any) => {
-          // 3️⃣ Opciók lekérése minden kérdéshez
+          
           const optionsRes = await apiClient.get(
             `/options?question_id=${q.id}`,
             { headers: { Authorization: `Bearer ${token}` } }
@@ -79,7 +78,7 @@ const PlayQuiz = () => {
     if (id) fetchQuiz();
   }, [id]);
 
-  // Opció kiválasztása
+
   const toggleOption = (optionId: number) => {
     if (selectedOptions.includes(optionId)) {
       setSelectedOptions(selectedOptions.filter((id) => id !== optionId));
@@ -88,7 +87,7 @@ const PlayQuiz = () => {
     }
   };
 
-  // Következő kérdés / quiz vége
+
   const handleNext = () => {
     if (!quiz) return;
     const currentQ = quiz.questions[currentIndex];
@@ -109,7 +108,7 @@ const PlayQuiz = () => {
   if (!quiz.questions || quiz.questions.length === 0)
     return <p>Nincsenek kérdések a quizhez.</p>;
 
-  // Quiz még nem kezdődött
+
   if (!started) {
     return (
       <div>
@@ -119,7 +118,7 @@ const PlayQuiz = () => {
     );
   }
 
-  // Quiz vége
+
   if (finished) {
     return (
       <div>
@@ -131,7 +130,7 @@ const PlayQuiz = () => {
     );
   }
 
-  // Jelenlegi kérdés
+
   const question = quiz.questions[currentIndex];
 
   return (

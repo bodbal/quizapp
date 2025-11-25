@@ -9,7 +9,7 @@ interface Option {
 
 interface Question {
   text: string;
-  correct_option: number; // index of the correct option
+  correct_option: number; 
   options: Option[];
 }
 

@@ -32,8 +32,8 @@ const navigate = useNavigate();
   };
 
   return (
-    <div style={styles.container}>
-      <form onSubmit={handleLogin} style={styles.box}>
+    <div>
+      <form onSubmit={handleLogin}>
         <h2>Bejelentkezés</h2>
 
         <input
@@ -41,7 +41,7 @@ const navigate = useNavigate();
           placeholder="Email..."
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={styles.input}
+          
         />
 
         <input
@@ -49,56 +49,18 @@ const navigate = useNavigate();
           placeholder="Jelszó..."
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
+          
         />
 
-        <button type="submit" style={styles.button}>
+        <button type="submit">
           Log In
         </button>
         <button type="submit" onClick={() => navigate("/")}>
           Sign up
         </button>
 
-        {error && <p style={styles.error}>{error}</p>}
       </form>
     </div>
   );
-}
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#f0f0f0",
-  },
-  box: {
-    display: "flex",
-    flexDirection: "column",
-    padding: "30px",
-    background: "#fff",
-    borderRadius: "8px",
-    width: "300px",
-    boxShadow: "0 0 10px rgba(0,0,0,.1)",
-  },
-  input: {
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-  },
-  button: {
-    padding: "10px",
-    marginTop: "10px",
-    background: "#007bff",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-  error: {
-    color: "red",
-    marginTop: "10px",
-  },
 };
