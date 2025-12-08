@@ -1,31 +1,31 @@
-:root{
-  --primary:#0d6efd; /* bootstrap primary blue */
-  --nav-height:64px;
+:root {
+  --primary: #0d6efd;
+  --nav-height: 64px;
 }
 
-/* Navbar */
-.app-navbar{
+.app-navbar {
   background: linear-gradient(90deg, var(--primary), #0b5ed7);
   color: #fff;
-  box-shadow: 0 6px 18px rgba(13,110,253,0.12);
-  position: sticky;
+  box-shadow: 0 6px 18px rgba(13, 110, 253, 0.12);
+  position: fixed;
   top: 0;
-  z-index: 999;
+  left: 0;
+  width: 100%;
   height: var(--nav-height);
   display: flex;
   align-items: center;
+  z-index: 999;
 }
 
-.navbar-inner{
+.navbar-inner {
   width: 100%;
-  padding-left: 1rem;
-  padding-right: 1rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
+  padding: 0 1rem;
 }
 
-.brand{
+.brand {
   font-weight: 700;
   font-size: 1.25rem;
   color: #fff !important;
@@ -33,44 +33,19 @@
   letter-spacing: 0.4px;
 }
 
-.nav-toggle{
-  border-radius: 6px;
-  border: none;
-  background: rgba(255,255,255,0.12) !important;
-}
-
-.nav-link{
-  color: rgba(255,255,255,0.95) !important;
+.nav-link {
+  color: rgba(255, 255, 255, 0.95) !important;
   font-weight: 600;
-  font-size: 1rem;
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
-  transition: background-color 160ms ease, transform 120ms ease;
+  transition: 0.2s ease;
 }
 
-.nav-link:hover{
-  background: rgba(255,255,255,0.08) !important;
-  transform: translateY(-1px);
-  color: #fff !important;
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Make the links look like buttons on wide screens */
-@media(min-width:768px){
-  .nav-link{
-    background: rgba(255,255,255,0.04);
-  }
-}
-
-/* When collapsed (mobile), make links full width in the collapse menu */
-@media(max-width:767px){
-  .navbar-collapse .nav-link{
-    display:block;
-    width:100%;
-    padding-left: 1rem;
-  }
-}
-
-/* Optional: adjust container spacing for the main content so navbar doesn't overlap */
-body{
+/* Body padding a navbar miatt */
+body {
   padding-top: calc(var(--nav-height) + 8px);
 }

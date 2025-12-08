@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import apiClient from "../api/apiClient";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { Container, Row, Col, Card, Button, Navbar, Nav } from "react-bootstrap";
+import type { Quizzes } from "../types/Quizzes";
+import "./AllQuize.css";
 interface Option {
   id: number;
   text: string;
@@ -28,8 +33,8 @@ const PlayQuiz = () => {
   const [score, setScore] = useState(0);
   const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(true);
-
-
+    const [expanded, setExpanded] = useState(false); // hamburger menü állapot
+  const navigate = useNavigate();
   const fetchQuiz = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -121,12 +126,30 @@ const PlayQuiz = () => {
 
   if (finished) {
     return (
+       <> <Navbar expand="lg" className="app-navbar" expanded={expanded}>
+        <Container fluid className="navbar-inner px-0">
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ms-auto d-flex align-items-center gap-3">
+              <Nav.Link className="nav-link" onClick={() => { navigate("/CreateQuiz"); setExpanded(false); }}>
+                Új kvíz
+              </Nav.Link>
+              <Nav.Link className="nav-link" onClick={() => { navigate("/login"); setExpanded(false); }}>
+                Bejelentkezés
+              </Nav.Link>
+              <Nav.Link className="nav-link" onClick={() => { navigate("/"); setExpanded(false); }}>
+                Regisztráció
+              </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
       <div>
         <h2>{quiz.title}</h2>
         <h3>
           Eredmény: {score} / {quiz.questions.length}
         </h3>
       </div>
+      </>
     );
   }
 

@@ -9,7 +9,7 @@ const Home = () => {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
-
+  const [expanded, setExpanded] = useState(false); // hamburger menü állapot
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submitting registration...");
