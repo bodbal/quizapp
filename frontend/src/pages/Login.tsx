@@ -3,14 +3,13 @@ import apiClient from "../api/apiClient";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Button, Navbar, Nav } from "react-bootstrap";
-import type { Quizzes } from "../types/Quizzes";
 import "./AllQuize.css";
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
-    const [expanded, setExpanded] = useState(false); // hamburger menü állapot
+    const [expanded, setExpanded] = useState(false); 
 const navigate = useNavigate();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +47,9 @@ const navigate = useNavigate();
               </Nav.Link>
               <Nav.Link className="nav-link" onClick={() => { navigate("/"); setExpanded(false); }}>
                 Regisztráció
+              </Nav.Link>
+              <Nav.Link className="nav-link" onClick={() => { navigate("/AllQuize"); setExpanded(false); }}>
+                Kívzek
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>

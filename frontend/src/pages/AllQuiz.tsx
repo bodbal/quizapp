@@ -8,7 +8,7 @@ import "./AllQuize.css";
 
 const AllQuize: React.FC = () => {
   const [quizzes, setQuizzes] = useState<Quizzes[]>([]);
-  const [expanded, setExpanded] = useState(false); // hamburger menü állapot
+  const [expanded, setExpanded] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +33,9 @@ const AllQuize: React.FC = () => {
               <Nav.Link className="nav-link" onClick={() => { navigate("/"); setExpanded(false); }}>
                 Regisztráció
               </Nav.Link>
+              <Nav.Link className="nav-link" onClick={() => { navigate("/AllQuize"); setExpanded(false); }}>
+                Kívzek
+              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -40,7 +43,7 @@ const AllQuize: React.FC = () => {
 
       
       <Container className="py-4">
-        <h2 className="fw-bold mb-4">Összes Quiz</h2>
+        <h2 className="fw-bold mb-4">Összes kvíz</h2>
 
         <Row className="g-4">
           {quizzes.map((quiz) => (

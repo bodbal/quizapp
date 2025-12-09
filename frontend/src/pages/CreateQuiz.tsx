@@ -73,7 +73,7 @@ const CreateQuiz = () => {
       navigate("/AllQuize");
     } catch (err) {
       console.error(err);
-      toast.error("Hiba történt a quiz létrehozása során!");
+      toast.error("Hiba történt a kvíz létrehozása során!");
     }
   };
 
@@ -90,6 +90,9 @@ const CreateQuiz = () => {
               </Nav.Link>
               <Nav.Link className="nav-link" onClick={() => { navigate("/"); setExpanded(false); }}>
                 Regisztráció
+              </Nav.Link>
+              <Nav.Link className="nav-link" onClick={() => { navigate("/AllQuize"); setExpanded(false); }}>
+                Kívzek
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>

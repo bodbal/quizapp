@@ -4,15 +4,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const router = Router();
-
-// router.get("/:id", (req, res) => {
-//   const user = Users.getUserById(+req.params.id);
-//   if (!user) {
-//     return res.status(404).json({ message: "User not found" });
-//   }
-//   res.json(user);
-// });
-
 router.get("/me", auth, (req, res) => {
   const user = Users.getUserById(+req.userId);
   if (!user) {
