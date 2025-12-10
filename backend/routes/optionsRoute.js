@@ -6,9 +6,14 @@ import { auth } from "./userRoute.js";
 const router = Router();
 
 router.get("/", (req, res) => {
-  res.json(Options.getOptions());
+  const questionId = req.query.question_id ? +req.query.question_id : null;
+  if (questionId) {
+    const options = Options.getOptionsByQuestion(questionId);
+    res.json(options);
+  } else {
+    res.json(Options.getOptions());
+  }
 });
-
 router.get("/:id", (req, res) => {
   const opt = Options.getOptionById(+req.params.id);
   if (!opt) return res.status(404).json({ message: "Option not found" });

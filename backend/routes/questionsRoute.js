@@ -6,10 +6,14 @@ import { auth } from "./userRoute.js";
 const router = Router();
 
 router.get("/", (req, res) => {
-  const questions = Questions.getQuestions();
-  res.json(questions);
+  const quizId = req.query.quiz_id ? +req.query.quiz_id : null;
+  if (quizId) {
+    const questions = Questions.getQuestionsByQuiz(quizId);
+    res.json(questions);
+  } else {
+    res.json(Questions.getQuestions());
+  }
 });
-
 
 router.get("/:id", (req, res) => {
   const q = Questions.getQuestionById(+req.params.id);

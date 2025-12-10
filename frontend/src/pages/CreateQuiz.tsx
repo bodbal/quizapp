@@ -1,17 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import apiClient from "../api/apiClient";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card, Button, Navbar, Nav } from "react-bootstrap";
-import type { Quizzes } from "../types/Quizzes";
+import { Container, Navbar, Nav } from "react-bootstrap";
 import "./AllQuize.css";
+
 interface Option {
+  id?: number; // backend adja
   text: string;
 }
 
 interface Question {
+  id?: number; // backend adja
   text: string;
-  correct_option: number; 
+  correct_option?: number; // opcion ID-ja
   options: Option[];
 }
 
@@ -19,9 +21,10 @@ const CreateQuiz = () => {
   const [title, setTitle] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const navigate = useNavigate();
-  const [expanded, setExpanded] = useState(false); // hamburger menü állapot
+  const [expanded, setExpanded] = useState(false);
+
   const handleAddQuestion = () => {
-    setQuestions([...questions, { text: "", correct_option: 0, options: [] }]);
+    setQuestions([...questions, { text: "", options: [] }]);
   };
 
   const handleAddOption = (qIndex: number) => {
@@ -30,9 +33,9 @@ const CreateQuiz = () => {
     setQuestions(newQuestions);
   };
 
-  const handleCorrectOptionChange = (qIndex: number, oIndex: number) => {
+  const handleCorrectOptionChange = (qIndex: number, optionId: number) => {
     const newQuestions = [...questions];
-    newQuestions[qIndex].correct_option = oIndex;
+    newQuestions[qIndex].correct_option = optionId;
     setQuestions(newQuestions);
   };
 
@@ -49,21 +52,38 @@ const CreateQuiz = () => {
       const quizId = quizRes.data.id;
 
       for (const q of questions) {
+        // 1. Kérdés mentése
         const questionRes = await apiClient.post(
           "/questions",
           {
             quiz_id: quizId,
             text: q.text,
-            correct_option: q.correct_option,
+            correct_option: 0, // ideiglenes, majd update-eljük az ID-t
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const questionId = questionRes.data.id;
 
+        // 2. Opciók mentése
+        const optionIds = [];
         for (const opt of q.options) {
-          await apiClient.post(
+          const optRes = await apiClient.post(
             "/options",
             { question_id: questionId, text: opt.text },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          optionIds.push(optRes.data.id);
+        }
+
+        // 3. Correct_option ID frissítése
+        if (q.correct_option !== undefined) {
+          await apiClient.put(
+            `/questions/${questionId}`,
+            {
+              quiz_id: quizId,
+              text: q.text,
+              correct_option: optionIds[q.correct_option],
+            },
             { headers: { Authorization: `Bearer ${token}` } }
           );
         }
@@ -78,81 +98,75 @@ const CreateQuiz = () => {
   };
 
   return (
-    <> <Navbar expand="lg" className="app-navbar" expanded={expanded}>
+    <>
+      <Navbar expand="lg" className="app-navbar" expanded={expanded}>
         <Container fluid className="navbar-inner px-0">
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto d-flex align-items-center gap-3">
-              <Nav.Link className="nav-link" onClick={() => { navigate("/CreateQuiz"); setExpanded(false); }}>
-                Új kvíz
-              </Nav.Link>
-              <Nav.Link className="nav-link" onClick={() => { navigate("/login"); setExpanded(false); }}>
-                Bejelentkezés
-              </Nav.Link>
-              <Nav.Link className="nav-link" onClick={() => { navigate("/"); setExpanded(false); }}>
-                Regisztráció
-              </Nav.Link>
-              <Nav.Link className="nav-link" onClick={() => { navigate("/AllQuize"); setExpanded(false); }}>
-                Kívzek
-              </Nav.Link>
+              <Nav.Link onClick={() => { navigate("/CreateQuiz"); setExpanded(false); }}>Új kvíz</Nav.Link>
+              <Nav.Link onClick={() => { navigate("/login"); setExpanded(false); }}>Bejelentkezés</Nav.Link>
+              <Nav.Link onClick={() => { navigate("/"); setExpanded(false); }}>Regisztráció</Nav.Link>
+              <Nav.Link onClick={() => { navigate("/AllQuize"); setExpanded(false); }}>Kvízek</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-    <div>
-      <h2>Új Quiz létrehozása</h2>
-      <form onSubmit={handleQuizSubmit}>
-        <input
-          type="text"
-          placeholder="Quiz címe"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
 
-        {questions.map((q, qIndex) => (
-          <div key={qIndex} style={{ marginBottom: "20px" }}>
-            <input
-              type="text"
-              placeholder={`Kérdés ${qIndex + 1}`}
-              value={q.text}
-              onChange={(e) => {
-                const newQuestions = [...questions];
-                newQuestions[qIndex].text = e.target.value;
-                setQuestions(newQuestions);
-              }}
-            />
-            {q.options.map((opt, oIndex) => (
-              <div key={oIndex} style={{ display: "flex", alignItems: "center", marginTop: "5px" }}>
-                <input
-                  type="radio"
-                  name={`correct-${qIndex}`}
-                  checked={q.correct_option === oIndex}
-                  onChange={() => handleCorrectOptionChange(qIndex, oIndex)}
-                />
-                <input
-                  type="text"
-                  placeholder={`Opció ${oIndex + 1}`}
-                  value={opt.text}
-                  onChange={(e) => {
-                    const newQuestions = [...questions];
-                    newQuestions[qIndex].options[oIndex].text = e.target.value;
-                    setQuestions(newQuestions);
-                  }}
-                  style={{ marginLeft: "5px" }}
-                />
-              </div>
-            ))}
-            <button type="button" onClick={() => handleAddOption(qIndex)} style={{ marginTop: "5px" }}>
-              Opció hozzáadása
-            </button>
-          </div>
-        ))}
+      <div>
+        <h2>Új Quiz létrehozása</h2>
+        <form onSubmit={handleQuizSubmit}>
+          <input
+            type="text"
+            placeholder="Quiz címe"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
 
-        <button type="button" onClick={handleAddQuestion}>
-          Kérdés hozzáadása
-        </button>
-        <button type="submit">Quiz mentése</button>
-      </form>
-    </div>
+          {questions.map((q, qIndex) => (
+            <div key={qIndex} style={{ marginBottom: "20px" }}>
+              <input
+                type="text"
+                placeholder={`Kérdés ${qIndex + 1}`}
+                value={q.text}
+                onChange={(e) => {
+                  const newQuestions = [...questions];
+                  newQuestions[qIndex].text = e.target.value;
+                  setQuestions(newQuestions);
+                }}
+              />
+
+              {q.options.map((opt, oIndex) => (
+                <div key={oIndex} style={{ display: "flex", alignItems: "center", marginTop: "5px" }}>
+                  <input
+                    type="radio"
+                    name={`correct-${qIndex}`}
+                    checked={q.correct_option === oIndex}
+                    onChange={() => handleCorrectOptionChange(qIndex, oIndex)}
+                  />
+                  <input
+                    type="text"
+                    placeholder={`Opció ${oIndex + 1}`}
+                    value={opt.text}
+                    onChange={(e) => {
+                      const newQuestions = [...questions];
+                      newQuestions[qIndex].options[oIndex].text = e.target.value;
+                      setQuestions(newQuestions);
+                    }}
+                    style={{ marginLeft: "5px" }}
+                  />
+                </div>
+              ))}
+
+              <button type="button" onClick={() => handleAddOption(qIndex)} style={{ marginTop: "5px" }}>
+                Opció hozzáadása
+              </button>
+            </div>
+          ))}
+
+          <button type="button" onClick={handleAddQuestion}>Kérdés hozzáadása</button>
+          <button type="submit">Quiz mentése</button>
+        </form>
+      </div>
     </>
   );
 };
